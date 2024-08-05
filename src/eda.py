@@ -1,10 +1,8 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-def eda(df: pd.DataFrame):
-    print(df.head())
-    print(df.info())
-    print(df.describe())
-    sns.pairplot(df)
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+def perform_eda(data):
+    plt.figure(figsize=(15, 8))
+    sns.scatterplot(data=data, x='GRE_Score', y='TOEFL_Score', hue='Admit_Chance')
     plt.show()

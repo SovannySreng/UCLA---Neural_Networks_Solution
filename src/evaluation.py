@@ -1,6 +1,21 @@
-from sklearn.metrics import classification_report, confusion_matrix
 
-def evaluate_model(model, x_test, y_test):
-    y_pred = model.predict(x_test)
-    print(classification_report(y_test, y_pred))
-    print(confusion_matrix(y_test, y_pred))
+from sklearn.metrics import confusion_matrix, accuracy_score
+import matplotlib.pyplot as plt
+
+def evaluate_model(model, Xtest, ytest):
+    ypred = model.predict(Xtest)
+    cm = confusion_matrix(ytest, ypred)
+    accuracy = accuracy_score(ytest, ypred)
+    
+    return cm, accuracy
+
+def plot_loss_curve(model):
+    loss_values = model.loss_curve_
+    plt.figure(figsize=(10, 6))
+    plt.plot(loss_values, label='Loss', color='blue')
+    plt.title('Loss Curve')
+    plt.xlabel('Iterations')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.grid(True)
+    plt.show()

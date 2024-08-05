@@ -1,47 +1,37 @@
+import warnings
+warnings.filterwarnings("ignore")
+
 from src.data_preprocessing import load_data, preprocess_data
-from src.eda import eda
-from src.feature_engineering import feature_engineering
+from src.eda import perform_eda
+from src.feature_engineering import create_features, split_data
 from src.model_training import train_model
-from src.evaluation import evaluate_model
-from src.visualizations import plot_histograms, plot_categorical_distribution
-from src.utils import setup_logging, log_error
-from sklearn.model_selection import train_test_split
-import pandas as pd
+from src.evaluation import evaluate_model, plot_loss_curve
+
 def main():
-    setup_logging()
+    data_path = 'H:/My Drive/BISI II/Data Science/Term Assignments/UCLA - Neural_Networks_Solution/data/Admission.csv'
     
-    try:
-        df = load_data('H:/My Drive/BISI II/Data Science/Term Assignments/UCLA - Neural_Networks_Solution/data/Admission.csv')              
-        # Perform EDA
-        eda(df)
-        
-        # Preprocess Data
-        df = preprocess_data(df)
-        
-        # Feature Engineering
-        df = feature_engineering(df)
-        
-        # Visualizations
-        num_cols = df.select_dtypes(include=['float64', 'int64']).columns.tolist()
-        cat_cols = df.select_dtypes(include=(['object', 'category'])).columns.tolist()
-        
-        plot_histograms(df, num_cols)
-        plot_categorical_distribution(df, cat_cols)
-        
-        # Split the data
-        X = df.drop('target', axis=1)
-        y = df['target']
-        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        
-        # Train the model
-        model = train_model(x_train, y_train)
-        
-        # Evaluate the model
-        evaluate_model(model, x_test, y_test)
-        
-    except Exception as e:
-        log_error(e)
-        print(f"An error occurred: {e}")
+    # Load and preprocess data
+    data = load_data(data_path)
+    data = preprocess_data(data)
+    
+    # Perform EDA
+    perform_eda(data)
+    
+    # Feature Engineering
+    data = create_features(data)
+    x, y = split_data(data)
+    
+    # Train Model
+    model, Xtrain, Xtest, ytrain, ytest = train_model(x, y)
+    
+    # Evaluate Model
+    cm, accuracy = evaluate_model(model, Xtest, ytest)
+    print('Confusion Matrix:')
+    print(cm)
+    print('Accuracy:', accuracy)
+    
+    # Plot Loss Curve
+    plot_loss_curve(model)
 
 if __name__ == "__main__":
     main()
